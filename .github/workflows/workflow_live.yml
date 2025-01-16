@@ -1,0 +1,71 @@
+name: Workflow Live
+on:
+  workflow_dispatch:
+  schedule:
+    # "At 8:20"
+    # https://crontab.guru/#20_12_*_*_5,6,0
+    - cron: "56 11,12,13,14,15 * * *"
+    - cron: "30 11,12,13,14,15 * * *"
+
+jobs:
+  fetch_publish:
+    name: Fetch and publish
+    runs-on: ubuntu-latest
+    env:
+      downloaded_json_file_name: "channel_list.json"
+      generated_markdown_file_name: "upcoming_live.md"
+    steps:
+      - uses: actions/checkout@v3.2.0
+        with:
+          fetch-depth: 1
+
+      - name: Fetch channel info from nicochannel.jp
+        run: |
+          set -e
+          curl \
+            --output '${{ env.downloaded_json_file_name }}' \
+            --show-error \
+            --silent \
+            'https://api.nicochannel.jp/fc/content_providers/channels'
+
+      - name: Process data
+        run: |
+          set -e
+          1>'${{ env.generated_markdown_file_name }}' \
+            bash \
+              ./the_script_live.sh \
+                '604800' \
+                '${{ env.downloaded_json_file_name }}'
+
+      - name: Read ${{ env.generated_markdown_file_name }}
+        id: read_result_file
+        uses: juliangruber/read-file-action@v1.1.6
+        with:
+          path: ${{ env.generated_markdown_file_name }}
+
+      - name: What time?
+        id: my_luminous_watch
+        uses: josStorer/get-current-time@v2.0.2
+        with:
+          format: "YYYYMMDDHHmmss"
+          utcOffset: "+00:00"
+
+      - name: Upload artifact "${{ env.downloaded_json_file_name }}"
+        uses: actions/upload-artifact@v3.1.1
+        with:
+          name: ${{ steps.my_luminous_watch.outputs.formattedTime }}_${{ env.downloaded_json_file_name }}
+          path: ${{ env.downloaded_json_file_name }}
+
+      - name: Upload artifact "${{ env.generated_markdown_file_name }}"
+        uses: actions/upload-artifact@v3.1.1
+        with:
+          name: ${{ steps.my_luminous_watch.outputs.formattedTime }}_${{ env.generated_markdown_file_name }}
+          path: ${{ env.generated_markdown_file_name }}
+
+      - name: Publish a release
+        uses: ncipollo/release-action@v1.12.0
+        with:
+          name: "Currenly live: ${{ steps.my_luminous_watch.outputs.readableTime }}"
+          tag: ${{ steps.my_luminous_watch.outputs.formattedTime }}
+          artifacts: "${{ env.generated_markdown_file_name }}"
+          body: ${{ steps.read_result_file.outputs.content }}
