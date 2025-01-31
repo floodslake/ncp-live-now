@@ -51,13 +51,13 @@ jobs:
           utcOffset: "+00:00"
 
       - name: Upload artifact "${{ env.downloaded_json_file_name }}"
-        uses: actions/upload-artifact@v3.1.1
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.my_luminous_watch.outputs.formattedTime }}_${{ env.downloaded_json_file_name }}
           path: ${{ env.downloaded_json_file_name }}
 
       - name: Upload artifact "${{ env.generated_markdown_file_name }}"
-        uses: actions/upload-artifact@v3.1.1
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.my_luminous_watch.outputs.formattedTime }}_${{ env.generated_markdown_file_name }}
           path: ${{ env.generated_markdown_file_name }}
