@@ -58,6 +58,9 @@ while read -r channel_info; do
 
       video_convert_to_vod_flg="$(jq --raw-output '.video.convert_to_vod_flg' <<<"${live_info}")";
       [[ "${video_convert_to_vod_flg}" == 'true' ]] && video_convert_to_vod_flg='';
+      
+      video_free="$(jq --raw-output '.video.start_with_free_part_flg' <<<"${live_info}")";
+      [[ "${video_free}" == 'true' ]] && video_free='';
 
       live_scheduled_start_at_second=$(date --date="${live_scheduled_start_at}" '+%s');
       live_started_at_second=$(date --date="${live_started_at}" '+%s');
@@ -83,6 +86,12 @@ while read -r channel_info; do
         status_vod=""
       fi;
 
+      if [[ "${video_free}" == 'false' ]]; then
+        status_free='&#10060'
+      else
+        status_free=""
+      fi;
+
       key="${live_started_at_second} ${content_code}"
       value="$(
         cat <<-TABLE_ROW
@@ -91,6 +100,7 @@ while read -r channel_info; do
 				<td>${live_started_at} <a href="${domain}/live/${content_code}" rel="noreferrer noopener" target="_blank">${content_code}</a> &#x1F534<br>${title}</td>
 				<td>${status_dvr}</td>
 				<td>${status_vod}</td>
+				<td>${status_free}</td>
 			</tr>
 			TABLE_ROW
       )"
@@ -126,6 +136,7 @@ cat <<'TABLE_HEADER'
     <th>START (UTC), URL & Title</th>
     <th>DVR</th>
     <th>VOD</th>
+    <th>FREE?</th>
   </thead>
 TABLE_HEADER
 
