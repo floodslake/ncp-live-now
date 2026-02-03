@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 1
 
-      - name: Fetch channel info from nicochannel.jp
+      - name: Fetch channel info from n+
         run: |
           set -e
           curl \
