@@ -21,7 +21,7 @@ jobs:
         run: |
           REPO="${{ github.repository }}"
 
-          for i in {1..10}; do
+          for i in {1..2}; do
             # 1. Get the total count of runs in the repo
             TOTAL_COUNT=$(gh api "repos/$REPO/actions/runs" --jq '.total_count')
             
@@ -38,7 +38,7 @@ jobs:
             echo "Fetching IDs from the oldest page (Page $LAST_PAGE)..."
             
             # 3. Get the IDs from that specific page
-            RUN_IDS=$(gh api "repos/$REPO/actions/runs?per_page=100&page=$LAST_PAGE" --jq '.workflow_runs[].id')
+            RUN_IDS=$(gh api "repos/$REPO/actions/runs?per_page=50&page=$LAST_PAGE&sort=created_at" --jq '.workflow_runs[].id')
 
             if [ -z "$RUN_IDS" ]; then
               echo "No runs found on the oldest page."
