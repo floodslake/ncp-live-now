@@ -1,7 +1,7 @@
 name: Cleanup
 on:
   schedule:
-    - cron: '0 0-10 * * *'
+    - cron: '0 0 1 * *'
   workflow_dispatch: 
 
 jobs:
@@ -31,8 +31,11 @@ jobs:
             # 2. Calculate the last page
             LAST_PAGE=$(( (TOTAL_COUNT / 100) ))
             
-            if [ "$LAST_PAGE" -le 0 ]; then LAST_PAGE=1; fi
-
+            if [ "$LAST_PAGE" -le 2 ]; then
+              echo "Last page is $LAST_PAGE (<= 2). Stopping cleanup to preserve recent history."
+              break
+            fi
+            
             echo "Fetching IDs from the oldest page (Page $LAST_PAGE)..."
 
             # 3. Get the IDs from that specific page
@@ -47,9 +50,9 @@ jobs:
 
             # 4. Delete them
             for ID in $RUN_IDS; do
-              echo "Deleting oldest run: $ID"
+              echo "Deleting: $ID"
               gh run delete --repo "$REPO" "$ID"
-              sleep 4
+              sleep $((1 + RANDOM % 2))
             done
           done
           
