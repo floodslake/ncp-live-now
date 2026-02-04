@@ -32,7 +32,7 @@ jobs:
             echo "--- Iteration $i of 10 ---"
             echo "Total runs in repo: $TOTAL_COUNT"
             
-            RUN_IDS=$(gh api "repos/$REPO/actions/runs?created=<$(date -d '30 days ago' +%Y-%m-%d)&per_page=10&sort=created&direction=asc" --jq '.workflow_runs[].id')
+            RUN_IDS=$(gh api "repos/$REPO/actions/runs?created=<$(date -d '30 days ago' +%Y-%m-%d)&per_page=10" --jq '.workflow_runs[].id')
             
             if [ -z "$RUN_IDS" ]; then
               echo "No runs found on the oldest page."
