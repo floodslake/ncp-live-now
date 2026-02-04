@@ -28,17 +28,12 @@ jobs:
             # 2. Calculate the last page
             LAST_PAGE=$(( (TOTAL_COUNT / 100) ))
             
-            if [ "$LAST_PAGE" -le 2 ]; then
-              echo "Last page is $LAST_PAGE (<= 2) and total runs in repo: $TOTAL_COUNT. Stopping cleanup to preserve recent history."
-              break
-            fi
-            
             echo "--- Iteration $i of 10 ---"
             echo "Total runs in repo: $TOTAL_COUNT"
             echo "Fetching IDs from the oldest page (Page $LAST_PAGE)..."
             
             # 3. Get the IDs from that specific page
-            RUN_IDS=$(gh api "repos/$REPO/actions/runs?per_page=100&page=$LAST_PAGE" --jq '.workflow_runs[].id')
+            RUN_IDS=$(gh api "repos/$REPO/actions/runs?query=created%3A<$(date -d '30 days ago' +%Y-%m-%d)&per_page=100&page=$LAST_PAGE" --jq '.workflow_runs[].id')
 
             if [ -z "$RUN_IDS" ]; then
               echo "No runs found on the oldest page."
@@ -49,7 +44,7 @@ jobs:
             for ID in $RUN_IDS; do
               echo "Deleting: $ID"
               gh run delete --repo "$REPO" "$ID"
-              sleep $(awk "BEGIN {print 1 + ($RANDOM % 100) / 100}")
+              sleep $(awk "BEGIN {print 0.5 + ($RANDOM % 150) / 100}")
             done
           done
           
