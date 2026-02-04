@@ -49,7 +49,7 @@ jobs:
             for ID in $RUN_IDS; do
               echo "Deleting oldest run: $ID"
               gh run delete --repo "$REPO" "$ID"
-              sleep 2
+              sleep 4
             done
           done
           
