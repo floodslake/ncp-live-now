@@ -21,31 +21,36 @@ jobs:
         run: |
           REPO="${{ github.repository }}"
 
-          # 1. Get the total count of runs in the repo
-          TOTAL_COUNT=$(gh api "repos/$REPO/actions/runs" --jq '.total_count')
-          echo "Total runs in repo: $TOTAL_COUNT"
+          for i in {1..10}; do
+            echo "--- Iteration $i of 10 ---"
 
-          # 2. Calculate the last page (GitHub puts oldest runs on the highest page number)
-          # If there are 1000 runs and we fetch 100 per page, page 10 is the oldest.
-          LAST_PAGE=$(( (TOTAL_COUNT / 100) ))
-          
-          if [ "$LAST_PAGE" -le 0 ]; then LAST_PAGE=1; fi
+            # 1. Get the total count of runs in the repo
+            TOTAL_COUNT=$(gh api "repos/$REPO/actions/runs" --jq '.total_count')
+            echo "Total runs in repo: $TOTAL_COUNT"
 
-          echo "Fetching IDs from the oldest page (Page $LAST_PAGE)..."
+            # 2. Calculate the last page
+            LAST_PAGE=$(( (TOTAL_COUNT / 100) ))
+            
+            if [ "$LAST_PAGE" -le 0 ]; then LAST_PAGE=1; fi
 
-          # 3. Get the IDs from that specific page
-          RUN_IDS=$(gh api "repos/$REPO/actions/runs?per_page=100&page=$LAST_PAGE" --jq '.workflow_runs[].id')
+            echo "Fetching IDs from the oldest page (Page $LAST_PAGE)..."
 
-          if [ -z "$RUN_IDS" ]; then
-            echo "No runs found on the oldest page."
-            exit 0
-          fi
+            # 3. Get the IDs from that specific page
+            RUN_IDS=$(gh api "repos/$REPO/actions/runs?per_page=100&page=$LAST_PAGE" --jq '.workflow_runs[].id')
 
-          # 4. Delete them
-          for ID in $RUN_IDS; do
-            echo "Deleting oldest run: $ID"
-            gh run delete --repo "$REPO" "$ID"
-            sleep 2
+            if [ -z "$RUN_IDS" ]; then
+              echo "No runs found on the oldest page."
+              # Using continue instead of exit to let the loop finish gracefully 
+              # or stop if the repo is empty.
+              break 
+            fi
+
+            # 4. Delete them
+            for ID in $RUN_IDS; do
+              echo "Deleting oldest run: $ID"
+              gh run delete --repo "$REPO" "$ID"
+              sleep 2
+            done
           done
           
       - name: Check Remaining Rate Limit
