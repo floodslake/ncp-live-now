@@ -52,7 +52,7 @@ jobs:
             for ID in $RUN_IDS; do
               echo "Deleting: $ID"
               gh run delete --repo "$REPO" "$ID"
-              sleep $((1 + RANDOM % 2))
+              sleep $(awk "BEGIN {print 1 + ($RANDOM % 100) / 100}")
             done
           done
           
