@@ -43,7 +43,7 @@ jobs:
             for ID in $RUN_IDS; do
               # echo "Deleting: $ID"
               gh run delete --repo "$REPO" "$ID"
-              DELAY=$(awk "BEGIN {print 1 + ($RANDOM % 100) / 100}")
+              DELAY=$(awk "BEGIN {print 0.5 + ($RANDOM % 150) / 100}")
               sleep $DELAY
               echo "DELETED: $ID $DELAY"
             done
