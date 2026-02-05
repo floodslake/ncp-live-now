@@ -29,7 +29,7 @@ jobs:
             echo "Total runs in repo: $TOTAL_COUNT"
             
             # 3. Get the IDs from that specific page
-            RUN_IDS=$(gh api "repos/$REPO/actions/runs?query=created%3A<$(date -d '30 days ago' +%Y-%m-%d)&per_page=100" --jq '.workflow_runs[].id')
+            RUN_IDS=$(gh api "repos/$REPO/actions/runs?query=created%3A<$(date -d '30 days ago' +%Y-%m-%d)&per_page=100&page=2" --jq '.workflow_runs[].id')
 
             if [ -z "$RUN_IDS" ]; then
               echo "No runs found on the oldest page."
@@ -39,7 +39,7 @@ jobs:
             # 4. Delete them
             for ID in $RUN_IDS; do
               echo "Deleting: $ID"
-              gh run delete --repo "$REPO" "$ID"
+              # gh run delete --repo "$REPO" "$ID"
               sleep $(awk "BEGIN {print 0.5 + ($RANDOM % 150) / 100}")
             done
           done
