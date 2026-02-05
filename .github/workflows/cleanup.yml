@@ -39,7 +39,7 @@ jobs:
             # 4. Delete them
             for ID in $RUN_IDS; do
               echo "Deleting: $ID"
-              # gh run delete --repo "$REPO" "$ID"
+              gh run delete --repo "$REPO" "$ID"
               sleep $(awk "BEGIN {print 0.5 + ($RANDOM % 150) / 100}")
             done
           done
