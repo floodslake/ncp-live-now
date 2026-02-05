@@ -25,6 +25,10 @@ jobs:
             # 1. Get the total count of runs in the repo
             TOTAL_COUNT=$(gh api "repos/$REPO/actions/runs" --jq '.total_count')
             
+            if [ "$TOTAL_COUNT" -le 100 ]; then 
+              break
+            fi
+            
             echo "--- Iteration $i of 10 ---"
             echo "Total runs in repo: $TOTAL_COUNT"
             
