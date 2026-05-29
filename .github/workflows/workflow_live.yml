@@ -4,11 +4,11 @@ on:
   schedule:
     # "At 8:20"
     # https://crontab.guru/#20_12_*_*_5,6,0
-    - cron: "46 14 * * *"
-    - cron: "16 13 * * *"
     - cron: "46 12 * * *"
     - cron: "16 11 * * *"
     - cron: "46 10 * * *"
+    - cron: "16 9 * * *"
+    - cron: "46 8 * * *"
     # - cron: "21 11-15 * * *"
 
 jobs:
