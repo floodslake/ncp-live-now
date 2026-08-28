@@ -1,14 +1,17 @@
 name: Workflow Live
 on:
+  push:
+    paths: 
+    - "temp.log"
   workflow_dispatch:
-  schedule:
+  # schedule:
     # "At 8:20"
     # https://crontab.guru/#20_12_*_*_5,6,0
-    - cron: "46 13 * * *"
-    - cron: "16 13 * * *"
-    - cron: "46 12 * * *"
-    - cron: "16 11 * * *"
-    - cron: "46 10 * * *"
+    # - cron: "46 13 * * *"
+    # - cron: "16 13 * * *"
+    # - cron: "46 12 * * *"
+    # - cron: "16 11 * * *"
+    # - cron: "46 10 * * *"
     # - cron: "21 11-15 * * *"
 
 jobs:
