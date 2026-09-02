@@ -76,3 +76,13 @@ jobs:
           tag: ${{ steps.my_luminous_watch.outputs.formattedTime }}
           artifacts: "${{ env.generated_markdown_file_name }}"
           body: ${{ steps.read_result_file.outputs.content }}
+          
+      - name: Delete Older Release
+        if: github.ref == 'refs/heads/main'
+        uses: dev-drprasad/delete-older-releases@v0.2.1
+        with:
+          repo: floodslake/ncp-live-now
+          keep_latest: 100
+          delete_tags: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
