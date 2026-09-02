@@ -54,10 +54,10 @@ jobs:
         run: gh api rate_limit --jq '.resources.core'
         
       - name: Delete Older Release
-        if: github.ref == 'refs/heads/live'
+        if: github.ref == 'refs/heads/main'
         uses: dev-drprasad/delete-older-releases@v0.2.1
         with:
-          repo: floodslake/ncp-live-finder
+          repo: floodslake/ncp-live-now
           keep_latest: 100
           delete_tags: true
         env:
