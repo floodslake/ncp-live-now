@@ -52,3 +52,13 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: gh api rate_limit --jq '.resources.core'
+        
+      - name: Delete Older Release
+        if: github.ref == 'refs/heads/live'
+        uses: dev-drprasad/delete-older-releases@v0.2.1
+        with:
+          repo: floodslake/ncp-live-finder
+          keep_latest: 100
+          delete_tags: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
