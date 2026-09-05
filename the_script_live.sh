@@ -35,6 +35,7 @@ while read -r channel_info; do
       "https://api.nicochannel.jp/fc/fanclub_sites/${fanclub_site_id}/live_pages?page=1&live_type=1&per_page=1" | \
     jq '.data' \
   )";
+  sleep 1
 
   if [[ "${live_page_info}" != 'null' ]]; then
     live_list="$(jq '.video_pages.list' <<<"${live_page_info}")";
@@ -51,6 +52,7 @@ while read -r channel_info; do
           "https://api.nicochannel.jp/fc/video_pages/${content_code}" | \
         jq '.data.video_page' \
       )";
+	  sleep 1
 
       live_scheduled_start_at="$(jq --raw-output '.live_scheduled_start_at' <<<"${live_info}")";
       live_started_at="$(jq --raw-output '.live_started_at' <<<"${live_info}")";
