@@ -17,7 +17,7 @@ on:
 jobs:
   fetch_publish:
     name: Fetch and publish
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-slim
     env:
       downloaded_json_file_name: "channel_list.json"
       generated_markdown_file_name: "upcoming_live.md"
